@@ -1,36 +1,15 @@
-import { useState } from "react";
-import FormSpecification from "./components/FormSpecification";
-import Backdrop from "./components/Backdrop";
-import Modal from "./components/Modal";
+import { Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import Form from "./pages/Form";
 
 function App() {
-  const [showModal, setShowModal] = useState();
-
-  function showModalHandler() {
-    setShowModal(true);
-  }
-
-  function closeModalHandler() {
-    setShowModal(false);
-  }
   return (
     <div>
-      <div className="container--main container-fluid">
-        <div className="d-flex justify-content-center">
-          <button
-            className="btn--specification-create"
-            onClick={showModalHandler}
-          >
-            Create a new JSON form specification
-          </button>
-        </div>
-        {showModal && <Backdrop onClick={closeModalHandler} />}
-        {showModal && <Modal onClose={closeModalHandler} />}
-
-        <h1 className="title--topic">Form Specification List</h1>
-        <FormSpecification jsonSpecification="jsonTest1" />
-        <FormSpecification jsonSpecification="jsonTeste2" />
-      </div>
+      <Routes>
+        <Route path="/" exact element={<Home/>}/>
+   
+        <Route path="/:specification/form" exact element={<Form/>}/>
+      </Routes>
     </div>
   );
 }
