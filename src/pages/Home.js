@@ -1,69 +1,42 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import FormSpecificationList from "../components/form-specifications/FormSpecificationList";
 import Backdrop from "../components/Backdrop";
 import Modal from "../components/Modal";
-const DUMMYDATA = [
-  [
-    {
-      key: {
-        id: 1,
-        type: "integer",
-        mutable: false,
-        default: "static_key",
-      },
-      value: {
-        id: 1,
-        type: "integer",
-        mutable: true,
-      },
-    },
-    {
-      key: {
-        id: 2,
-        type: "text",
-        mutable: false,
-        default: "static_key2",
-      },
-      value: {
-        id: 2,
-        type: "text",
-        mutable: true,
-      },
-    },
-  ],
-  [
-    {
-      key: {
-        id: 3,
-        type: "text",
-        mutable: false,
-        default: "static_key3",
-      },
-      value: {
-        id: 3,
-        type: "text",
-        mutable: true,
-      },
-    },
-  ],
-  [
-    {
-      key: {
-        id: 4,
-        type: "text",
-        mutable: false,
-        default: "static_key4",
-      },
-      value: {
-        id: 4,
-        type: "text",
-        mutable: true,
-      },
-    },
-  ],
-];
+import DUMMYDATA from "../utils/DummySpecifications";
+
 function Home(props) {
   const [showModal, setShowModal] = useState();
+  const [isLoading, setIsLoading] = useState(true);
+  const [jsonSpecifications, setJsonSpecifications] = useState([]);
+
+  useEffect(() => {
+    fetchJsonSpecifications();
+  }, [setIsLoading, setJsonSpecifications]);
+
+  function fetchJsonSpecifications() {
+    setIsLoading(true);
+    try{
+    fetch("http://localhost:3000/key_value_pair_definitions/")
+      .then((response) => {
+        return response.json();
+      }).then((data) => {
+        let dataArray = [];
+        
+        for (const key in data) {
+          const specification = {
+            id: key,
+            specification: [data[key]]
+          };
+          dataArray.push(specification);
+        }
+        setJsonSpecifications(dataArray);
+      })
+    } catch (erro) {
+      console.log("Server error");
+    } finally {
+        setIsLoading(false);
+      }
+  }
 
   function showModalHandler() {
     setShowModal(true);
@@ -71,6 +44,14 @@ function Home(props) {
 
   function closeModalHandler() {
     setShowModal(false);
+  }
+
+  if (isLoading) {
+    return (
+      <div>
+        <p>Loading ...</p>
+      </div>
+    )
   }
 
   return (
@@ -87,7 +68,7 @@ function Home(props) {
         {showModal && <Backdrop onClick={closeModalHandler} />}
         {showModal && <Modal onClose={closeModalHandler} />}
 
-        <FormSpecificationList jsonSpecifications={DUMMYDATA} />
+        <FormSpecificationList jsonSpecifications={jsonSpecifications} />
       </div>
     </div>
   );

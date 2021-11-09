@@ -8,7 +8,7 @@ function FormSpecificationList(props) {
      {
          props.jsonSpecifications.map((jsonSpecification) => (
              <FormSpecification 
-             key={jsonSpecification[0].key.id}
+             key={jsonSpecification.id}
              jsonSpecification={jsonSpecification}
              />
          ))
